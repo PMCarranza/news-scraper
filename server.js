@@ -1,43 +1,145 @@
 'use strict';
 
-// all four were installed 10/25/ 5:44pm
+// express, exphbs, cheerio, axios were installed 10/25/ 5:44pm
+// added logger and mongoose 10/26 5pm
 const express = require('express');
 const exphbs = require('express-handlebars');
+const logger = require('morgan');
+const mongoose = require('mongoose');
+
+// Our scraping tools
+// Axios is a promised-based http library, similar to jQuery's Ajax method
+// It works on the client and on the server
 const cheerio = require('cheerio');
 const axios = require('axios');
 
+// Require all models
+var db = require('./models');
+
+var PORT = 3000;
+
+// Initialize Express
 const app = express();
+
+
+// Configure middleware
+
+// Use morgan logger for logging requests
+app.use(logger('dev'));
+
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Make public a static folder
+app.use(express.static('public'));
+
+// use handlebars
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
-// Making a request via axios for The Onion site
+// By default, Express will require() the engine based on the file extension. In this case handlebar and express-handlebars are being required.
+// the folder structure for this is the views(folder)layouts,partials(subfolders), index.handelbars in views
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 
-axios.get('https://www.theonion.com/').then(function (response) {
-    // Load the Response into cheerio and save it to a variable
-    // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-    var $ = cheerio.load(response.data);
-    // An empty array to save the data that we'll scrape
-    var results = [];
+// After the view engine is set, there is no need to specify the engine or load the template engine module in the app; Express loads the module internally
+// this is better explained in controller.js where the html files are referenced
+app.set('view engine', 'handlebars');
 
-    // With cheerio, find each p-tag with the "title" class
-    // (i: iterator. element: the current element)
-    $('section').each(function (i, element) {
-        // Save the text of the element in a "title" variable
-        var title = $(element).text();
+// Connect to the Mongo DB
+mongoose.connect('mongodb://localhost/newsScraper', { useNewUrlParser: true });
 
-        // In the currently selected element, look at its child elements (i.e., its a-tags),
-        // then save the values for any "href" attributes that the child elements may have
-        var link = $(element).children().attr('href');
+// routes
 
-        // Save these results in an object that we'll push into the results array we defined earlier
-        results.push({
-            title: title,
-            link: link
+// A GET route for scraping the lahora.gt website
+app.get('/scrape', function (req, res) {
+    // First, we grab the body of the html with axios
+    axios.get('https://lahora.gt/').then(function (response) {
+        // Load the Response into cheerio and save it to a variable
+        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
+        var $ = cheerio.load(response.data);
+
+        // With cheerio, find each h3-tag with the "title" class
+        // (i: iterator. element: the current element)
+        $('h3').each(function (i, element) {
+
+            // An empty object to save the data that we'll scrape
+            var result = {};
+
+            // Add the text and href of every link, and save them as properties of the result object
+            result.title = $(this)
+                .children('a')
+                .text();
+            result.link = $(this)
+                .children('a')
+                .attr('href');
+
+            // Create a new Article using the `result` object built from scraping
+            db.Article.create(result)
+                .then(function (dbArticle) {
+                    // View the added result in the console
+                    console.log('Articles--> ', dbArticle);
+                })
+                .catch(function (err) {
+                    // if error ocurred, log it
+                    console.log(err);
+                });
         });
 
+        // Send a message to the client
+        res.send('Scrape Complete');
+
     });
+});
 
-    // Log the results once you've looped through each of the elements found with cheerio
-    console.log(results);
+// Route for getting all Articles from the db
+app.get('/articles', function (req, res) {
 
+    // Grab every document in the Articles collection
+    db.Article.find({})
+        .then(function (dbArticle) {
+            // If we were able to successfully find Articles, send them back to the client
+            res.json(dbArticle);
+        })
+        .catch(function (err) {
+            // If an error occurred, send it to the client
+            res.json(err);
+        });
+});
+
+// Route for grabbing a specific Article by id, populate it with it's headline
+app.get('/articles/:id', function (req, res) {
+    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+    db.Article.findOne({ _id: req.params.id })
+        // ..and populate all of the headlines associated with it
+        .populate('headline')
+        .then(function (dbArticle) {
+            // If we were able to successfully find an Article with the given id, send it back to the client
+            res.json(dbArticle)
+        })
+        .catch(function (err) {
+            // If an error occurred, send it to the client
+            res.json(err);
+        });
+});
+
+// Route for saving/updating an Article's associated headline
+app.post('articles/:id', function (req, res) {
+    // Create a new headline and pass the req.body to the entry
+    db.Headline.create(req.body)
+        .then(function (dbHeadline) {
+            // If a Headline was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Headline
+            // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+            // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+            return db.Article.findOneAndUpdate({ _id: req.params.id }, { headline: dbHeadline._id }, { new: true });
+        })
+        .catch(function (err) {
+            // If an error occurred, send it to the client
+            res.json(err);
+        });
+});
+
+// Start the server
+app.listen(PORT, function () {
+    console.log('App running on port - - > ' + PORT);
 });
