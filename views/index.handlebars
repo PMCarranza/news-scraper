@@ -14,22 +14,22 @@
 <div id="main">
 
     <ul id="left">
-        {{#each nws}}
-        <h6 Headline: >{{title}}</h6>
-        <h3 Read article >{{link}}</h3>
+        {{#each data}}
+        <li>{{data.title}}</li>
         {{!-- {{#unless isRead}}
         {{> news/news-block isRead=true}}
         {{/unless}} --}}
         {{/each}}
     </ul>
-{{!-- 
+
     <ul id="right">
-        {{#each Article}}
-        {{#if isRead}}
+        {{#each data}}
+        <li>{{data.link}}</li>
+        {{!-- {{#if isRead}}
         {{> news/news-block isRead=false}}
-        {{/if}}
+        {{/if}} --}}
         {{/each}}
-    </ul> --}}
+    </ul>
 
 </div>
 
