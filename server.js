@@ -16,6 +16,8 @@ const axios = require('axios');
 // Require all models
 var db = require('./models');
 
+// code needed for heroku deployment
+
 var PORT = 3000;
 
 // Initialize Express
@@ -35,19 +37,32 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // use handlebars
+// By default, Express will require() the engine based on the file extension. In this case handlebar and express-handlebars are being required.
+// the folder structure for this is the views(folder)layouts,partials(subfolders), index.handelbars in views
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
-// By default, Express will require() the engine based on the file extension. In this case handlebar and express-handlebars are being required.
-// the folder structure for this is the views(folder)layouts,partials(subfolders), index.handelbars in views
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 
 // After the view engine is set, there is no need to specify the engine or load the template engine module in the app; Express loads the module internally
 // this is better explained in controller.js where the html files are referenced
 app.set('view engine', 'handlebars');
 
-// Connect to the Mongo DB
+// Connect to the Mongo DB and if ti hasn't been created already, creates a DB named newsScraperDB
+// useNewUrlParser parses the db url
 mongoose.connect('mongodb://localhost/newsScraper', { useNewUrlParser: true });
+
+// store the mongoose connection in a variable
+const dbConnection = mongoose.connection;
+
+// listening for DB connection error
+dbConnection.on('error', console.error.bind(console, 'connection error:'));
+
+// listening for DB connection succes
+dbConnection.once('open', () => {
+    console.log('connected to Mongoose');
+    // performs DB on connection queries here (e.g. run a bulkinsert)
+});
 
 // routes
 
@@ -74,7 +89,8 @@ app.get('/scrape', function (req, res) {
                 .children('a')
                 .attr('href');
 
-            // Create a new Article using the `result` object built from scraping
+            // Create a new Article using the `result` object built from scraping mongoose uses promises, mongo does not.
+            // this is Article exported from Article.js
             db.Article.create(result)
                 .then(function (dbArticle) {
                     // View the added result in the console
@@ -92,6 +108,14 @@ app.get('/scrape', function (req, res) {
     });
 });
 
+app.get('/', function (req, res) {
+    res.render('index');
+
+    // res.render('index', { nws: db.Article });
+    // console logs the function
+    // console.log('DBARTICLE', db.Article);
+
+});
 // Route for getting all Articles from the db
 app.get('/articles', function (req, res) {
 
@@ -109,9 +133,10 @@ app.get('/articles', function (req, res) {
 
 // Route for grabbing a specific Article by id, populate it with it's headline
 app.get('/articles/:id', function (req, res) {
-    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
     db.Article.findOne({ _id: req.params.id })
         // ..and populate all of the headlines associated with it
+        // .populate('headline') references the 'headline' field and supplies the headline object with the data that is collected via the _id currently stored, this populates headline object ref:'Headline'in Article.js
         .populate('headline')
         .then(function (dbArticle) {
             // If we were able to successfully find an Article with the given id, send it back to the client
@@ -124,6 +149,7 @@ app.get('/articles/:id', function (req, res) {
 });
 
 // Route for saving/updating an Article's associated headline
+// create an association with the headline it belongs to
 app.post('articles/:id', function (req, res) {
     // Create a new headline and pass the req.body to the entry
     db.Headline.create(req.body)
@@ -132,6 +158,9 @@ app.post('articles/:id', function (req, res) {
             // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
             // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
             return db.Article.findOneAndUpdate({ _id: req.params.id }, { headline: dbHeadline._id }, { new: true });
+        })
+        .then(function (dbArticle) {
+            res.json(dbArticle);
         })
         .catch(function (err) {
             // If an error occurred, send it to the client

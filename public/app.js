@@ -4,7 +4,7 @@ console.log('app.js');
 // Grab the articles as a json
 $.getJSON('/Articles', function (data) {
     // for each one
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < 20; i++) {
         // Display the headlines on the page
         $('#articles').append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
     }
