@@ -4,38 +4,19 @@
     {{!-- <img src="/assets/img/bebida.png" title="drink drawn by my daughter" alt="handrawn drink"> --}}
 </div>
 
-{{!-- <div id="headlines">
-
-    <h2 id="lft-hdr"> How do these look?</h2>
-    <h2 id="rgt-hdr"> These are gone!</h2>
-
-</div> --}}
-
 <div id="main">
 
-    <ul id="left">
-        {{#each data}}
-        <li>{{data.title}}</li>
-        {{!-- {{#unless isRead}}
-        {{> news/news-block isRead=true}}
-        {{/unless}} --}}
-        {{/each}}
-    </ul>
+    {{#each data}}
 
-    <ul id="right">
-        {{#each data}}
-        <li>{{data.link}}</li>
-        {{!-- {{#if isRead}}
-        {{> news/news-block isRead=false}}
-        {{/if}} --}}
-        {{/each}}
-    </ul>
+    <button class="delete-article" id="{{_id}}">Read Later!</button>
+    <h3>{{title}}</h3>
+    <a href=>{{link}}</a>
+    {{/each}}
 
 </div>
 
-{{!-- <h4>que es esto</h4> --}}
 
-<form class="create-form">
+{{!-- <form class="create-form">
 
     <div class="form-group">
         <label for="bur">article Name:</label>
@@ -44,4 +25,4 @@
 
     <button type="submit" id="add-article">Read later</button>
 
-</form>
+</form> --}}

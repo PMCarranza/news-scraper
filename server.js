@@ -74,7 +74,7 @@ app.get('/scrape', function (req, res) {
         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
         var $ = cheerio.load(response.data);
 
-        console.log('$ - - > ', $);
+        // console.log('$ - - > ', $);
 
         // With cheerio, find each h3-tag with the "title" class
         // (i: iterator. element: the current element)
@@ -97,6 +97,7 @@ app.get('/scrape', function (req, res) {
                 .then(function (dbArticle) {
                     // View the added result in the console
                     console.log('Articles--> ', dbArticle);
+
                 })
                 .catch(function (err) {
                     // if error ocurred, log it
@@ -105,16 +106,23 @@ app.get('/scrape', function (req, res) {
         });
 
         // Send a message to the client
-        res.send('Scrape Complete');
+        // res.send('Scrape Complete');
+        res.redirect("/");
+
 
     });
 });
 
 app.get('/', function (req, res) {
-    res.render('index');
+    // res.render('index');
     // console.log('RES - - > ', res);
+    db.Article.find({}).then(function (allArticles) {
+        for (let i = 0; i < 20; i++) {
+            // console.log(allArticles[i].title)
+        }
+        res.render('index', { data: allArticles });
+    })
 
-    // res.render('index', { nws: db.Article });
     // console logs the function
     // console.log('DBARTICLE', db.Article);
 
