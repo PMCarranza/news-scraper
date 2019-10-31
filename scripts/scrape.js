@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 const request = require('request');
 
 var scrape = function (cb) {
-    request('https://lahora.gt/'), function (err, res, body) {
+    request('https://lahora.gt/', function (err, res, body) {
         // Load the Response into cheerio and save it to a variable
         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
         var $ = cheerio.load(body);
@@ -18,12 +18,19 @@ var scrape = function (cb) {
             var head = $(this).children('a').text();
             var link = $(this).children('a').attr('href');
 
-            //     if (head && link) {
-            //         var headNeat=head.replace(/(\r\n|\n|\t|\t|\s+)/gm, '').trim();
-            //         var linkNeat=head.replace(/(\r\n|\n|\t|\t|\s+)/gm, '').trim();
-            // }
+            if (head && link) {
+                var headNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
+                var linkNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
 
-
+                var datatoAdd = {
+                    headline: headNeat,
+                    link: linkNeat
+                };
+                articles.push(dataToAdd);
+            };
         });
-    }
+        cb(articles);
+    });
 };
+
+module.exports = scrape;
