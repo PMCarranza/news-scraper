@@ -1,16 +1,125 @@
 // 'use strict';
 console.log('app.js');
+var scrape;
 
-// Grab the articles as a json
-$.getJSON('/Articles', function (data) {
-    //// for each one
-    for (var i = 0; i < 10; i++) {
-        // Display the headlines on the page
-        // $('#articles').append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-    };
-    console.log('DATA - - > ', data);
+$('#scrape').on('click', function (req, res) {
 
+    scrape = $(this).data('value');
+
+    console.log('value of button - - > '+ scrape);
+
+    
+    // First, we grab the body of the html with axios
+
+    // 'https://lahora.gt/'
+
+    axios.get(scrape).then(function (response) {
+        event.preventDefault();
+        console.log(response);
+
+        // Load the Response into cheerio and save it to a variable
+        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
+        var $ = cheerio.load(response.data);
+
+        // console.log('$ - - > ', $);
+
+        // With cheerio, find each h3-tag with the "title" class
+        // (i: iterator. element: the current element)
+        $('h3').each(function (i, element) {
+
+            // An empty object to save the data that we'll scrape
+            var result = {};
+
+            // Add the text and href of every link, and save them as properties of the result object
+            result.title = $(this)
+                .children('a')
+                .text();
+            result.link = $(this)
+                .children('a')
+                .attr('href');
+
+            // Create a new Article using the `result` object built from scraping mongoose uses promises, mongo does not.
+            // this is Article exported from Article.js
+            db.Article.create(result)
+                .then(function (dbArticle) {
+                    // View the added result in the console
+                    console.log('Articles--> ', dbArticle);
+
+                })
+                .catch(function (err) {
+                    // if error ocurred, log it
+                    console.log(err);
+                });
+        });
+
+        // //Send a message to the client
+        // res.send('Scrape Complete');
+        // res.redirect("/");
+    });
 });
+
+// $('.delete').on('click', function () {
+//     var thisId = $(this).attr('data-id');
+//     $.ajax({
+//         method: 'POST',
+//         url: '/articles/delete' + thisId
+//     }).done(function (data) {
+//         window.location = '/saved';
+//     });
+// });
+
+$('#save-news').on('click', function (event) {
+
+    event.preventDefault();
+
+    // var thisId = $('#save');
+    // console.log('THIS ID - - > ', thisId);
+    if (!$('#save-news' + thisId).val()) {
+        alert('Select news to be saved');
+    } else {
+        $.ajax({
+            method: 'POST',
+            url: '/news/' + thisId,
+            data: {
+                text: $('#save-news' + thisId).val()
+            }
+        }).done(function (data) {
+            console.log('D A T A - - > ', data);
+            // $('#news-text' + thisId).val('');
+            // $('#.modal-news').modal('hide');
+            // window.location = '/saved';
+        });
+                res.redirect("/articles");
+
+    };
+});
+
+// $(".delete-news").on("Click", function(){
+// 	var newsId = $(this).attr("data-news-id");
+// 	var articleId = $(this).attr("data-article-id");
+// 	$.ajax({
+// 		method: "DELETE",
+// 		url: "/news/delete/" + newsId + "/" + articleId
+// 	}).done(function(data){
+// 		console.log(data)
+// 		$(".modal-news").modal("hide");
+// 		window.location = "/saved"
+// 	})
+// });
+
+
+
+
+// // Grab the articles as a json
+// $.getJSON('/Articles', function (data) {
+//     //// for each one
+//     for (var i = 0; i < 20; i++) {
+//         // Display the headlines on the page
+//         // $('#articles').append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+//     };
+//     console.log('DATA - - > ', data);
+
+// });
 
 // // Whenever someone clicks a p tag
 // $(document).on('click', 'p', function () {

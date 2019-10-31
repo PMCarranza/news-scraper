@@ -1,0 +1,56 @@
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">SCRAPIING LA HORA.GT!</a>
+        </div>
+    </div>
+</nav>
+
+<ul class="nav justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link active" href="/">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/">Saved Articles</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link disabled" href="#">SCRAPE!</a>
+    </li>
+</ul>
+
+<div class="jumbotron text-center">
+    <div class="overlay"></div>
+    <div class="background-image"></div>
+    <div class="caption">
+        <h1 class="display-3">Headlines don't sell papes!</h1>
+        <p class="lead">Newsies sell papes</p>
+    </div>
+</div>
+<div class="container-fluid article-container"></div>
+
+<div id="top">
+    {{!-- <img src="/assets/img/hamburger.png" title="burger drawn by my daughter" alt="handrawn burger"> --}}
+    <h1>Saved Articles</h1>
+    {{!-- <img src="/assets/img/bebida.png" title="drink drawn by my daughter" alt="handrawn drink"> --}}
+</div>
+
+<div id="main">
+
+    {{#each data}}
+    <h3>{{title}}</h3>
+    <button type="submit" id="save-news" id="{{_id}}">Read Later!</button>
+    <a href="{{link}}">Read Article</a>
+    {{/each}}
+
+</div>
+
+<footer class="footer">
+    <div class="container>">
+        <p>La Hora.gt Mongo Scraper</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/booststrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+<script src="../../assets/javascript/index.js"
