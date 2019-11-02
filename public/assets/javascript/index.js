@@ -6,6 +6,7 @@ $(document).ready(function () {
     // adding event listeners to any dynamically generated 'save article'
     // and 'scrape new article' buttons
     var articleContainer = $('.article-container');
+
     $(document).on('click', '.btn.save', handleArticleSave);
     $(document).on('click', '.scrape-new', handleArticleScrape);
 
@@ -16,6 +17,7 @@ $(document).ready(function () {
         // empty the article container, run an ajax request for any unsaved headlines
         articleContainer.empty();
         $.get('/api/headlines?saved-false').then(function (data) {
+            console.log('DATA - - > ', data);
             // if there are headlines render them to the page
             if (data && data.length) {
                 renderArticles(data);
@@ -54,7 +56,7 @@ $(document).ready(function () {
                 '</h3>',
                 '</div>',
                 '<div class="panel-body">',
-                article.summary,
+                article.link,
                 '</div>',
                 '</div'].join(''));
         
@@ -92,7 +94,10 @@ $(document).ready(function () {
         // when articles are initially rendered a js object containing the headline id is attached to the element using the .data method
         // below that data is retrieved
         var articleToSave = $(this).parents('.panel').data();
+        console.log('ARTICLE TO SAVE - - > ', articleToSave);
         articleToSave.saved = true;
+        console.log('ARTICLE TO SAVE - - > ', articleToSave);
+
 
         // using a patch method to be semantic since this is an update to an existing record in the collection
         $.ajax({
@@ -116,7 +121,8 @@ $(document).ready(function () {
                 // if we are able to succesfully scrape LaHora.gt and compare the articles to those already in the collection, re render the articles on the page
                 // and let the user know how many unique articles we were able to save
                 initPage();
-                bootbox.alert('<h3 class="text-center m-top-80">' + data.message + '</h3>');
+                alert(data.message);
+                // bootbox.alert('<h3 class="text-center m-top-80">' + data.message + '</h3>');
             });
     }
 });

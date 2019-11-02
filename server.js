@@ -22,7 +22,7 @@ const router = express.Router();
 require('./config/routes')(router);
 
 // Require all models
-var db = require('./models');
+// var db = require('./models');
 
 // code needed for heroku deployment
 
@@ -39,6 +39,7 @@ app.use(express.json());
 
 // Make public a static folder
 app.use(express.static(__dirname + '/public'));
+console.log('__DIRNAME - -> ', __dirname);
 
 // // use bodyParser
 // app.use(bodyParser.urlencoded({

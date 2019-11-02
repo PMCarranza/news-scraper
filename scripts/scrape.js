@@ -8,8 +8,9 @@ var scrape = function (cb) {
         // Load the Response into cheerio and save it to a variable
         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
         var $ = cheerio.load(body);
-        console.log('BODY - - > ', body);
-        console.log('$', $);
+        // console.log('BODY - - > ', body);
+        // console.log('ERROR - - > ', err);
+        // console.log('$', $);
 
         var articles = [];
 
@@ -19,20 +20,22 @@ var scrape = function (cb) {
                 
             var head = $(this).children('a').text();
             var link = $(this).children('a').attr('href');
-            console.log('head - - > ', head);
+            // console.log('head - - > ', head);
 
             if (head && link) {
                 var headNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
                 var linkNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
 
-                var datatoAdd = {
+                var dataToAdd = {
                     headline: headNeat,
                     link: linkNeat
                 };
                 articles.push(dataToAdd);
+                console.log('DATA TO ADD - - > ', dataToAdd);
             };
         });
         cb(articles);
+        // console.log('ARTICLES - - > ', articles);
     });
 };
 

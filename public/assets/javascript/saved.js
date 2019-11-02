@@ -1,3 +1,5 @@
+import { truncate } from "fs";
+
 console.log('savedjs');
 
 $(document).ready(function () {
@@ -100,7 +102,7 @@ $(document).ready(function () {
         } else {
 
             // if there are comments, go through eah one
-            for (var i = 0; i < 20; i++){
+            for (var i = 0; i < data.notes.length; i++) {
                 // constructs an li element to contain the comments and a delete button
                 currentComment.children('button').data('_id', data.comments[i]._id);
                 // adding our currentComment to the CommentsToRender array
@@ -126,28 +128,79 @@ $(document).ready(function () {
                 initPage();
             };
         });
-};
+    };
 
-function handleArticleDelete() {
+    function handleArticleComments() {
 
-    // this function handles dleteing articles/headlines
-    // grabbing the id of the article to get comments from the panel element, the delete button sits inside
-    var currentArticle = $(this).parents('.panel').data();
-    // grab any comments with this headline/article id
-    $.get('/api/comments' + currentArticle._id).then(function (data) {
-        // constructing our initial html to add to the comments modal
-        var modalText = [
-            '<div class="container-fluid text-center">',
-            '<h4>Comments for Article: ',
-            currentArticle._id,
-            '</h4>',
-            '<hr />',
-            '<ul class="list-group note-container',
-            '</ul>',
-            '<textarea placeholder="New Comment" rows="5" cols="60></textarea>',
-            '<button class="btn-success save">Save Comment</button',
-        ]
-    })
-}
+        // this function handles dleteing articles/headlines
+        // grabbing the id of the article to get comments from the panel element, the delete button sits inside
+        var currentArticle = $(this).parents('.panel').data();
+        // grab any comments with this headline/article id
+        $.get('/api/comments' + currentArticle._id).then(function (data) {
+            // constructing our initial html to add to the comments modal
+            var modalText = [
+                '<div class="container-fluid text-center">',
+                '<h4>Comments for Article: ',
+                currentArticle._id,
+                '</h4>',
+                '<hr />',
+                '<ul class="list-group note-container',
+                '</ul>',
+                '<textarea placeholder="New Comment" rows="5" cols="60></textarea>',
+                '<button class="btn-success save">Save Comment</button',
+                '</div>'
+            ].join('');
+            // adding the formatted html to the comment modal
+            // Bootbox.js is a small JavaScript library which allows you to create programmatic dialog boxes using Bootstrap modals,
+            // without having to worry about creating, managing, or removing any of the required DOM elements or JavaScript event handlers.  http://bootboxjs.com/
+            bootbox.dialog({
+                message: modalText,
+                closeButton: true
+            });
+            var commentData = {
+                _id: currentArticle._id,
+                comments: data || []
+            };
+            // adding some information about the article and artile comments to the save button easy acces
+            // when tryin to add a new comment
+            $('.btn.save').data('article', commentData);
+            // renderCommentsList will populate the actual comment html inside of the modal we just created/opened
+            renderCommentsList(commentData);
+        });
+    };
 
+    function handleCommentSave() {
+        // this function handles what happens when a user tries to save a new comment for an article
+        // setting a variable to hold some formatted data aobut our note
+        // grabbing the note typed into the input box
+        var CommentData;
+        var newComment = $('.bootbox-body textarea').val().trim();
+        // if we actually have data typed into the note input field, format it
+        // and post it to the '/api/comments" route and send the formatted commentData as well
+        if (newComment) {
+            commentData = {
+                id: $(this).data('article')._id,
+                commentText: newComment
+            };
+            $.post('/api/comments', commentData).then(function () {
+                // when complete, close the modal
+                bootbox.hideAll();
+            });
+        };
+    };
+
+    function handleCommentDelete() {
+        // this function handles the deletion of comments
+        // first we gram the id of the note we want to delete
+        // we stored this data on the delete button when we created it
+        var commentToDelete = $(this).data('_id');
+        // perform a DELETE reques to '/api/comments/' with the id of the comment we are deleting as a parameter
+        $.ajax({
+            url: '/api/comments/' + commentToDelete,
+            method: 'DELETE'
+        }).then(function () {
+            // when done, hide the modal
+            bootbox.hideAll();
+        });
+    };
 });

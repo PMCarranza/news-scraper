@@ -37,7 +37,7 @@ module.exports = function (router) {
             query = req.query;
         }
         headlinesController.get(query, function (data) {
-            res.jason(data);
+            res.json(data);
         });
     });
     router.delete('/api/headlines/:id', function (req, res) {
