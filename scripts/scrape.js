@@ -22,9 +22,9 @@ var scrape = function (cb) {
             var link = $(this).children('a').attr('href');
             // console.log('head - - > ', head);
 
-            if (head && link) {
-                var headNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
-                var linkNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
+            // if (head && link) {
+            //     var headNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
+            //     var linkNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
 
                 var dataToAdd = {
                     headline: headNeat,
@@ -32,7 +32,7 @@ var scrape = function (cb) {
                 };
                 articles.push(dataToAdd);
                 console.log('DATA TO ADD - - > ', dataToAdd);
-            };
+            // };
         });
         cb(articles);
         // console.log('ARTICLES - - > ', articles);

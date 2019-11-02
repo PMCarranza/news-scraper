@@ -24,10 +24,6 @@ require('./config/routes')(router);
 // Require all models
 // var db = require('./models');
 
-// code needed for heroku deployment
-
-
-
 
 // Configure middleware
 // Use morgan logger for logging requests
