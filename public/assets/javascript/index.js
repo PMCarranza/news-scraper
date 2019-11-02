@@ -31,7 +31,7 @@ $(document).ready(function () {
         // array of JSON containing all available articles is passed
         var articlePanels = [];
         // each article object is passed to the createPanel function which returns a bootstrap panel with the article data inside
-        for (var i = 0; i < 20; i++){
+        for (var i = 0; i < 20; i++) {
             articlePanels.push(createPanel(articles[i]));
         }
 
@@ -41,7 +41,7 @@ $(document).ready(function () {
     };
 
     function createPanel(article) {
-    // this function takes in  a single JSON object for an article/headline
+        // this function takes in  a single JSON object for an article/headline
         // it constructs a jQuery element containing all of the formatted html for the artticle panel
         var panel =
             $(['<div class="panel-default">',
@@ -86,4 +86,37 @@ $(document).ready(function () {
         // append data to the page
         articleContainer.append(emptyAlert);
     }
-})
+
+    function handleArticleSave() {
+        // funtion runs when user wants to save an article
+        // when articles are initially rendered a js object containing the headline id is attached to the element using the .data method
+        // below that data is retrieved
+        var articleToSave = $(this).parents('.panel').data();
+        articleToSave.saved = true;
+
+        // using a patch method to be semantic since this is an update to an existing record in the collection
+        $.ajax({
+            method: 'PATCH',
+            url: '/api/headlines',
+            data: articleToSave
+        })
+            .then(function (data) {
+                // if succesful, mongoose will send back an object containing a key of 'ok with the value of 1
+                // (which casrts to 'true')
+                if (data.ok) {
+                    // run the iniPage function again.  this will reload the entire list of articles
+                    intiPage();
+                };
+            });
+    };
+    function handleArticleScrape() {
+        // this function handles the user clicking any 'scrape new article' buttons
+        $.get('/api/fetch')
+            .then(function (data) {
+                // if we are able to succesfully scrape LaHora.gt and compare the articles to those already in the collection, re render the articles on the page
+                // and let the user know how many unique articles we were able to save
+                initPage();
+                bootbox.alert('<h3 class="text-center m-top-80">' + data.message + '</h3>');
+            });
+    }
+});

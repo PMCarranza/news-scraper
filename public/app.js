@@ -1,98 +1,98 @@
-// 'use strict';
-console.log('app.js');
-var scrape;
+// // 'use strict';
+// console.log('app.js');
+// var scrape;
 
-$('#scrape').on('click', function (req, res) {
+// $('#scrape').on('click', function (req, res) {
 
-    scrape = $(this).data('value');
+//     scrape = $(this).data('value');
 
-    console.log('value of button - - > '+ scrape);
+//     console.log('value of button - - > '+ scrape);
 
     
-    // First, we grab the body of the html with axios
+//     // First, we grab the body of the html with axios
 
-    // 'https://lahora.gt/'
+//     // 'https://lahora.gt/'
 
-    axios.get(scrape).then(function (response) {
-        event.preventDefault();
-        console.log(response);
+//     axios.get(scrape).then(function (response) {
+//         event.preventDefault();
+//         console.log(response);
 
-        // Load the Response into cheerio and save it to a variable
-        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-        var $ = cheerio.load(response.data);
+//         // Load the Response into cheerio and save it to a variable
+//         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
+//         var $ = cheerio.load(response.data);
 
-        // console.log('$ - - > ', $);
+//         // console.log('$ - - > ', $);
 
-        // With cheerio, find each h3-tag with the "title" class
-        // (i: iterator. element: the current element)
-        $('h3').each(function (i, element) {
+//         // With cheerio, find each h3-tag with the "title" class
+//         // (i: iterator. element: the current element)
+//         $('h3').each(function (i, element) {
 
-            // An empty object to save the data that we'll scrape
-            var result = {};
+//             // An empty object to save the data that we'll scrape
+//             var result = {};
 
-            // Add the text and href of every link, and save them as properties of the result object
-            result.title = $(this)
-                .children('a')
-                .text();
-            result.link = $(this)
-                .children('a')
-                .attr('href');
+//             // Add the text and href of every link, and save them as properties of the result object
+//             result.title = $(this)
+//                 .children('a')
+//                 .text();
+//             result.link = $(this)
+//                 .children('a')
+//                 .attr('href');
 
-            // Create a new Article using the `result` object built from scraping mongoose uses promises, mongo does not.
-            // this is Article exported from Article.js
-            db.Article.create(result)
-                .then(function (dbArticle) {
-                    // View the added result in the console
-                    console.log('Articles--> ', dbArticle);
+//             // Create a new Article using the `result` object built from scraping mongoose uses promises, mongo does not.
+//             // this is Article exported from Article.js
+//             db.Article.create(result)
+//                 .then(function (dbArticle) {
+//                     // View the added result in the console
+//                     console.log('Articles--> ', dbArticle);
 
-                })
-                .catch(function (err) {
-                    // if error ocurred, log it
-                    console.log(err);
-                });
-        });
+//                 })
+//                 .catch(function (err) {
+//                     // if error ocurred, log it
+//                     console.log(err);
+//                 });
+//         });
 
-        // //Send a message to the client
-        // res.send('Scrape Complete');
-        // res.redirect("/");
-    });
-});
-
-// $('.delete').on('click', function () {
-//     var thisId = $(this).attr('data-id');
-//     $.ajax({
-//         method: 'POST',
-//         url: '/articles/delete' + thisId
-//     }).done(function (data) {
-//         window.location = '/saved';
+//         // //Send a message to the client
+//         // res.send('Scrape Complete');
+//         // res.redirect("/");
 //     });
 // });
 
-$('#save-news').on('click', function (event) {
+// // $('.delete').on('click', function () {
+// //     var thisId = $(this).attr('data-id');
+// //     $.ajax({
+// //         method: 'POST',
+// //         url: '/articles/delete' + thisId
+// //     }).done(function (data) {
+// //         window.location = '/saved';
+// //     });
+// // });
 
-    event.preventDefault();
+// $('#save-news').on('click', function (event) {
 
-    // var thisId = $('#save');
-    // console.log('THIS ID - - > ', thisId);
-    if (!$('#save-news' + thisId).val()) {
-        alert('Select news to be saved');
-    } else {
-        $.ajax({
-            method: 'POST',
-            url: '/news/' + thisId,
-            data: {
-                text: $('#save-news' + thisId).val()
-            }
-        }).done(function (data) {
-            console.log('D A T A - - > ', data);
-            // $('#news-text' + thisId).val('');
-            // $('#.modal-news').modal('hide');
-            // window.location = '/saved';
-        });
-                res.redirect("/articles");
+//     event.preventDefault();
 
-    };
-});
+//     // var thisId = $('#save');
+//     // console.log('THIS ID - - > ', thisId);
+//     if (!$('#save-news' + thisId).val()) {
+//         alert('Select news to be saved');
+//     } else {
+//         $.ajax({
+//             method: 'POST',
+//             url: '/news/' + thisId,
+//             data: {
+//                 text: $('#save-news' + thisId).val()
+//             }
+//         }).done(function (data) {
+//             console.log('D A T A - - > ', data);
+//             // $('#news-text' + thisId).val('');
+//             // $('#.modal-news').modal('hide');
+//             // window.location = '/saved';
+//         });
+//                 res.redirect("/articles");
+
+//     };
+// });
 
 // $(".delete-news").on("Click", function(){
 // 	var newsId = $(this).attr("data-news-id");

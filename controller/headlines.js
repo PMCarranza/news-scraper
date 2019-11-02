@@ -1,5 +1,7 @@
 // importing scrape.js and makeDatejs
 
+console.log('headlines.js');
+
 var scrape = require('../scripts/scrape');
 var makeDate = require('../scripts/date');
 
