@@ -16,8 +16,8 @@ $(document).ready(function () {
 
     function initPage() {
         // empty the article container, run an ajax request for any saved headlines
-        articleContainer.empty();
         $.get('/api/headlines?saved=true').then(function (data) {
+            articleContainer.empty();
             console.log('DATA - - > ', data);
             // if there are headlines, render them to the page
             if (data && data.length) {
@@ -38,12 +38,12 @@ $(document).ready(function () {
 
         // we pass each article json object to the createPanel function which returns a bootstrap panel with the article data inside
         for (var i = 0; i < 20; i++) {
-            articlePanels.push(cratePanel(articles[i]));
+            articlePanels.push(createPanel(articles[i]));
         }
 
         // once we have all of the html for the articles stored in the articlePanels array
         // append them to the articlePanels containe
-        articlesContainer.append(articlePanels);
+        articleContainer.append(articlePanels);
     };
 
     function createPanel(article) {
@@ -59,12 +59,14 @@ $(document).ready(function () {
                 '</a>',
                 '</div>',
                 '<div class="panel-body">',
-                article.link,
+                '<a target="_blank">'
+                .attr("href",article.link),
                 '</div>',
                 '</div>'
             ].join(''));
-
-        // attaching the article's id to the jQuery element
+        
+            articleContainer.append(panel);
+            // attaching the article's id to the jQuery element
         // we will use this when trying to figure out which article the user wants to remove or open notes for
         panel.data('_id', article._id);
         // return the constructed panel jQuery element

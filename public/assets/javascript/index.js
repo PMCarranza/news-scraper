@@ -61,7 +61,7 @@ $(document).ready(function () {
                 '</a>',
                 '</div>',
                 '</div'].join(''));
-        
+
         // attaches the article's id to the jQuery element
         // will use this when trying to figure out which article the user wants to save
         panel.data('_id', article._id);
@@ -97,12 +97,18 @@ $(document).ready(function () {
         // below that data is retrieved
         var articleToSave = $(this).parents('.panel').data();
         // console.log('ARTICLE TO SAVE - - > ', articleToSave);
+
+        // Remove panel from page
+        $(this)
+            .parents(".panel")
+            .remove();
+
         articleToSave.saved = true;
         console.log('ARTICLE TO SAVE - - > ', articleToSave);
 
         // using a patch method to be semantic since this is an update to an existing record in the collection
         $.ajax({
-            method: 'PATCH',
+            method: 'PUT',
             url: '/api/headlines',
             data: articleToSave
         })
@@ -110,7 +116,7 @@ $(document).ready(function () {
                 console.log(data);
                 // if succesful, mongoose will send back an object containing a key of 'ok with the value of 1
                 // (which casrts to 'true')
-                if (data.ok) {
+                if (data.saved) {
                     // run the iniPage function again.  this will reload the entire list of articles
                     intiPage();
                 };
@@ -127,5 +133,12 @@ $(document).ready(function () {
                 // alert(data.message);
                 bootbox.alert('<h3 class="text-center m-top-80">' + data.message + '</h3>');
             });
+    }
+
+    function handleArticleClear() {
+        $.get("api/clear").then(function () {
+            articleContainer.empty();
+            initPage();
+        });
     }
 });

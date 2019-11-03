@@ -1,13 +1,19 @@
 console.log('scrape.js');
 
 const cheerio = require('cheerio');
-const request = require('request');
+// const request = require('request');
+const axios = require('axios');
 
-var scrape = function (cb) {
-    request('https://lahora.gt/', function (err, res, body) {
+var scrape = function () {
+
+    // request('https://lahora.gt/', function (err, res, body) {
+        return axios.get("https://lahora.gt/").then(function(res) {
+
         // Load the Response into cheerio and save it to a variable
         // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-        var $ = cheerio.load(body);
+            // var $ = cheerio.load(body);
+            var $ = cheerio.load(res.data);
+
         // console.log('BODY - - > ', body);
         // console.log('ERROR - - > ', err);
         // console.log('$', $);
@@ -29,7 +35,7 @@ var scrape = function (cb) {
                 articles.push(dataToAdd);
                 // console.log('DATA TO ADD - - > ', dataToAdd);
         });
-        cb(articles);
+        return articles;
         // console.log('ARTICLES - - > ', articles);
     });
 };

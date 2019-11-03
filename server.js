@@ -32,7 +32,7 @@ app.use(express.json());
 
 // Make public a static folder
 app.use(express.static(__dirname + '/public'));
-console.log('__DIRNAME - -> ', __dirname);
+// console.log('__DIRNAME - -> ', __dirname);
 
 // // use bodyParser
 // app.use(bodyParser.urlencoded({

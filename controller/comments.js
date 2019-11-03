@@ -5,7 +5,7 @@ var makeDate = require('../scripts/date');
 
 
 module.exports = {
-    get: function (dta, cb) {
+    get: function (data, cb) {
         Comment.find({
             _headlineId: data._id
         },

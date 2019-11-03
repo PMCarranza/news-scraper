@@ -22,6 +22,7 @@ module.exports = function (router) {
 // this is directly linked to controller/headlines.js
     router.get('/api/fetch', function (req, res) {
         headlinesController.fetch(function (err, docs) {
+
             if (!docs || docs.insertedCount === 0) {
                 res.json({
                     message: 'Nothing new at the moment, check back later'
@@ -40,6 +41,7 @@ module.exports = function (router) {
         }
         headlinesController.get(query, function (data) {
             res.json(data);
+            // console.log('routesjs -> get - > DATA - - > ', data);
         });
     });
     router.delete('/api/headlines/:id', function (req, res) {
@@ -50,9 +52,10 @@ module.exports = function (router) {
         });
     });
 
-    router.patch('/api/headlines', function (req, res) {
+    router.put('/api/headlines', function (req, res) {
         headlinesController.update(req.body, function (err, data) {
             res.json(data);
+            console.log('routesjs-> put -> DATA  - - > ', data);
         });
     });
 
