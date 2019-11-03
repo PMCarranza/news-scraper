@@ -1,2 +1,3 @@
-# news-scraper
-web app that lets users view and leave comments on the latest news
+# **News-scraper** #
+
+Every time the user visits this page the latest headlines from "LaHora.gt" are displayed.
