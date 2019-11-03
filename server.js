@@ -21,9 +21,6 @@ const app = express();
 const router = express.Router();
 require('./config/routes')(router);
 
-// Require all models
-// var db = require('./models');
-
 
 // Configure middleware
 // Use morgan logger for logging requests
@@ -62,22 +59,12 @@ const database = process.env.MONGODB_URI || 'mongodb://localhost/newsScraper';
 mongoose.connect(database, { useNewUrlParser: true }, function (error) {
     if (error) {
         console.log(error);
+    } else {
+        console.log('Connected to mongoose - - > ', database);
     }
 });
 
-// // connect mongoose to the database
-// mongoose.connect(database, function (error) {
-//     // log any errors connecting with mongoose
-//     if (error) {
-//         console.log(error);
-//     }
-//     // log succesful connection
-//     else {
-//         console.log('Connected to mongoose');
-//     };
-// });
-
-    var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 3000;
 
 // Start the server
 app.listen(PORT, function () {

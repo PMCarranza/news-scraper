@@ -16,13 +16,15 @@ module.exports = function (router) {
     // route to render the saved handlebars page
     router.get('/saved', function (req, res) {
         res.render('saved');
+        // console.log('routes -> saved -> RES ', res);
     });
 
+// this is directly linked to controller/headlines.js
     router.get('/api/fetch', function (req, res) {
         headlinesController.fetch(function (err, docs) {
             if (!docs || docs.insertedCount === 0) {
                 res.json({
-                    message: 'Noting new at the moment, check back later'
+                    message: 'Nothing new at the moment, check back later'
                 });
             } else {
                 res.json({
@@ -64,7 +66,7 @@ module.exports = function (router) {
         });
     });
 
-    router.delete('/api/comments/:id', function (eq, res) {
+    router.delete('/api/comments/:id', function (req, res) {
         var query = {};
         query._id = req.params.id;
         commentsController.delete(query, function (err, data) {

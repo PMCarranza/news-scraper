@@ -14,6 +14,8 @@ module.exports = {
         scrape(function (data) {
             var articles = data;
             for (var i = 0; i < 20; i++) {
+                // has data 
+                // console.log('controller - headlines - ARTICLES - - > ', articles);
                 articles[i].date = makeDate();
                 articles[i].saved = false;
             }
@@ -24,7 +26,7 @@ module.exports = {
     },
     delete: function (query, cb) {
         Headline.remove(query, cb);
-    }, 
+    },
     get: function (query, cb) {
         Headline.find(query)
             .sort({

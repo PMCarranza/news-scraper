@@ -1,4 +1,3 @@
-import { truncate } from "fs";
 
 console.log('savedjs');
 
@@ -7,21 +6,24 @@ $(document).ready(function () {
     var articleContainer = $('.article-container');
     // addin event listeners for dynamically generated buttons for deleting articles,
     // pulling up articles notes, saving articles notes, and deleting article notes
-    $(document).on('click', 'btn.delete', handleArticleDelete);
-    $(document).on('click', 'btn.notes', handleArticleComments);
-    $(document).on('click', 'btn.save', handleCommentSave);
-    $(document).on('click', 'btn.note-delete', handleCommentDelete);
+    $(document).on('click', '.btn.delete', handleArticleDelete);
+    $(document).on('click', '.btn.notes', handleArticleComments);
+    $(document).on('click', '.btn.save', handleCommentSave);
+    $(document).on('click', '.btn.note-delete', handleCommentDelete);
 
     // initPage kicks everything off when the page is loaded
     initPage();
 
     function initPage() {
         // empty the article container, run an ajax request for any saved headlines
+        articleContainer.empty();
         $.get('/api/headlines?saved=true').then(function (data) {
+            console.log('DATA - - > ', data);
             // if there are headlines, render them to the page
             if (data && data.length) {
                 renderArticles(data);
             } else {
+                console.log('NOTHING TO RENDER');
                 // otherwise render a message explaining there are no articles
                 renderEmpty();
             };
@@ -29,6 +31,7 @@ $(document).ready(function () {
     };
 
     function renderArticles(articles) {
+        console.log('ARTICLES - - > ', articles);
         // this function handles appending html containing the article data to the page
         // an array of json containing all available articles in the db is passed
         var articlePanels = [];
@@ -44,7 +47,7 @@ $(document).ready(function () {
     };
 
     function createPanel(article) {
-        // this function takes in a single jason object for an article/headline
+        // this function takes in a single json object for an article/headline
         // it constructs a jQuery element containing all of the formatted html for the article panel
         var panel =
             $(['<div class="panel panel-default">',
@@ -56,7 +59,7 @@ $(document).ready(function () {
                 '</a>',
                 '</div>',
                 '<div class="panel-body">',
-                article.summary,
+                article.link,
                 '</div>',
                 '</div>'
             ].join(''));
@@ -79,9 +82,13 @@ $(document).ready(function () {
                 '<div class="panel-heading text-center">',
                 '<h3>Would you like to Browse available articles?</h3>',
                 '</div>',
+                '<div class="panel-body text-center">',
+                '<h4><a href="/">Browse Articles</a></h4>',
+                '</div>',
                 '</div>'
             ].join(''));
         // appending this data to the page
+        articleContainer.append(emptyAlert);
     }
 
     function renderCommentsList(data) {

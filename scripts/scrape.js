@@ -20,19 +20,14 @@ var scrape = function (cb) {
                 
             var head = $(this).children('a').text();
             var link = $(this).children('a').attr('href');
-            // console.log('head - - > ', head);
-
-            // if (head && link) {
-            //     var headNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
-            //     var linkNeat = head.replace(/(\r\n|\n|\r|\t|\t|\s+)/gm, '').trim();
+            // console.log('link - - > ', link);
 
                 var dataToAdd = {
-                    headline: headNeat,
-                    link: linkNeat
+                    headline: head,
+                    link: link
                 };
                 articles.push(dataToAdd);
-                console.log('DATA TO ADD - - > ', dataToAdd);
-            // };
+                // console.log('DATA TO ADD - - > ', dataToAdd);
         });
         cb(articles);
         // console.log('ARTICLES - - > ', articles);

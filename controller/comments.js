@@ -1,7 +1,7 @@
 // importing scrape.js and makeDatejs
 
-var Comment = require('../controller/comments.js');
-var makeDate = require('../controller/headlines');
+var Comment = require('../models/Comments');
+var makeDate = require('../scripts/date');
 
 
 module.exports = {
