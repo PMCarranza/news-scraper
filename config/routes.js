@@ -7,6 +7,8 @@ var scrape = require('../scripts/scrape');
 var headlinesController = require('../controller/headlines');
 var commentsController = require('../controller/comments');
 
+const Headline = require('../models/Headline');
+
 module.exports = function (router) {
     // route to render the homepage
     router.get('/', function (req, res) {
@@ -40,8 +42,8 @@ module.exports = function (router) {
             query = req.query;
         }
         headlinesController.get(query, function (data) {
-            res.json(data);
             // console.log('routesjs -> get - > DATA - - > ', data);
+            res.json(data);
         });
     });
     router.delete('/api/headlines/:id', function (req, res) {
@@ -53,10 +55,17 @@ module.exports = function (router) {
     });
 
     router.put('/api/headlines', function (req, res) {
-        headlinesController.update(req.body, function (err, data) {
-            res.json(data);
+        console.log('SAVING ARTICLE')
+        Headline.findByIdAndUpdate(req.body._id, {saved: true}, { new: true}, function (err, data) {
+            if (err) {
+                console.log(err)
+                throw err
+            }
             console.log('routesjs-> put -> DATA  - - > ', data);
+            res.json(data);
+            
         });
+
     });
 
     router.get('/api/comments/:headline_id?', function (req, res) {

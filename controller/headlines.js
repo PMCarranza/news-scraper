@@ -37,9 +37,10 @@ module.exports = {
             });
     },
     // updates new articles scraped via ids
-    update: function (query, cb) {
-        Headline.update({ _id: query._id }), {
-            $set: query
-        }, {}, (cb);
-    }
+    // update: function (query, cb) {
+    //     console.log('UPDATING')
+    //     Headline.update({ _id: query._id }), {
+    //         $set: query
+    //     }, {}, cb();
+    // }
 };

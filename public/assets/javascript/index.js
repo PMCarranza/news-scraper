@@ -55,12 +55,10 @@ $(document).ready(function () {
                 '</a>',
                 '</h3>',
                 '</div>',
-                '<div class="panel-body">',
-                '<a href=>',
-                article.link,
-                '</a>',
-                '</div>',
-                '</div'].join(''));
+                // '<div class="">',
+                '<a href=' + article.link + '>Link</a>',
+                // '</div>',
+                '</div>'].join(''));
 
         // attaches the article's id to the jQuery element
         // will use this when trying to figure out which article the user wants to save
@@ -113,7 +111,7 @@ $(document).ready(function () {
             data: articleToSave
         })
             .then(function (data) {
-                console.log(data);
+                // console.log(data);
                 // if succesful, mongoose will send back an object containing a key of 'ok with the value of 1
                 // (which casrts to 'true')
                 if (data.saved) {

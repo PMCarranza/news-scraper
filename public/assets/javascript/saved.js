@@ -17,8 +17,9 @@ $(document).ready(function () {
     function initPage() {
         // empty the article container, run an ajax request for any saved headlines
         $.get('/api/headlines?saved=true').then(function (data) {
-            articleContainer.empty();
             console.log('DATA - - > ', data);
+            articleContainer.empty();
+            
             // if there are headlines, render them to the page
             if (data && data.length) {
                 renderArticles(data);
@@ -59,8 +60,7 @@ $(document).ready(function () {
                 '</a>',
                 '</div>',
                 '<div class="panel-body">',
-                '<a target="_blank">'
-                .attr("href",article.link),
+                '<a target="_blank" href=' + article.link + '>Link</a>',
                 '</div>',
                 '</div>'
             ].join(''));
