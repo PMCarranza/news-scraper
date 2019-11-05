@@ -9,7 +9,7 @@ $(document).ready(function () {
     $(document).on('click', '.btn.delete', handleArticleDelete);
     $(document).on('click', '.btn.notes', handleArticleComments);
     $(document).on('click', '.btn.save', handleCommentSave);
-    $(document).on('click', '.btn.note-delete', handleCommentDelete);
+    $(document).on('click', '.btn-danger.delete', handleCommentDelete);
 
     // initPage kicks everything off when the page is loaded
     initPage();
@@ -60,9 +60,10 @@ $(document).ready(function () {
                 '</a>',
                 '</div>',
                 '<div class="panel-body">',
-                '<a target="_blank" href=' + article.link + '>Link</a>',
+                '<a href=>',
+                article.link,
+                '</a>',
                 '</div>',
-                '</div>'
             ].join(''));
         
             articleContainer.append(panel);

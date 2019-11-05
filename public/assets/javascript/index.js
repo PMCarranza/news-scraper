@@ -55,10 +55,15 @@ $(document).ready(function () {
                 '</a>',
                 '</h3>',
                 '</div>',
-                // '<div class="">',
-                '<a href=' + article.link + '>Link</a>',
-                // '</div>',
+                '<div class="panel-body">',
+                '<a href=>',
+                article.link,
+                '</a>',
+                '</div>',
                 '</div>'].join(''));
+        
+        articleContainer.append(panel);
+
 
         // attaches the article's id to the jQuery element
         // will use this when trying to figure out which article the user wants to save
