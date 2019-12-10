@@ -1,43 +1,54 @@
-console.log('scrape.js');
+// Require axios and cheerio, making our scrapes possible
+var axios = require("axios");
+var cheerio = require("cheerio");
 
-const cheerio = require('cheerio');
-const request = require('request');
-// const axios = require('axios');
+// This function will scrape the lahora.gt website
+var scrape = function() {
+  // Scrape the lahora.gt website
+  return axios.get("https://lahora.gt/").then(function(res) {
+    var $ = cheerio.load(res.data);
+    // console.log("scraping");
+    // Make an empty array to save our article info
+    var articles = [];
 
-var scrape = function () {
+    // Now, find and loop through each element that has the ".entry-title td-module-title" class
+    // (i.e, the section holding the articles)
+    $("h3").each(function(i, element) {
+      // In each article section, we grab the headline, URL
 
-    request('https://lahora.gt/', function (err, res, body) {
-        // return axios.get("https://lahora.gt/").then(function(res) {
+      // Grab the headline of the article
+      var head = $(this)
+        .find("a")
+        .text()
+        .trim();
 
-        // Load the Response into cheerio and save it to a variable
-        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-            var $ = cheerio.load(body);
-            // var $ = cheerio.load(res.data);
+      // Grab the URL of the article
+      var url = $(this)
+        .find("a")
+        .attr("href");
 
-        // console.log('BODY - - > ', body);
-        // console.log('ERROR - - > ', err);
-        // console.log('$', $);
+      // So long as our headline and sum and url aren't empty or undefined, do the following
+      if (head && url) {
+        // This section uses regular expressions and the trim function to tidy our headlines and summaries
+        // We're removing extra lines, extra spacing, extra tabs, etc.. to increase to typographical cleanliness.
+        var headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
+        // console.log('headneat - - > ', headNeat);
 
-        var articles = [];
+        // Initialize an object we will push to the articles array
+        var dataToAdd = {
+          headline: headNeat,
+          url: url
+        };
 
-        // With cheerio, find each h3-tag with the "title" class
-        // (i: iterator. element: the current element)
-        $('h3').each(function (i, element) {
-                
-            var head = $(this).children('a').text();
-            var link = $(this).children('a').attr('href');
-            // console.log('link - - > ', link);
-
-                var dataToAdd = {
-                    headline: head,
-                    link: link
-                };
-                articles.push(dataToAdd);
-                // console.log('DATA TO ADD - - > ', dataToAdd);
-        });
-        return articles;
-        // console.log('ARTICLES - - > ', articles);
+        // Push new article into articles array
+        articles.push(dataToAdd);
+        // console.log('articles push - - > ', dataToAdd);
+        // console.log('articles - - > ', articles);
+      }
     });
+    return articles;
+  });
 };
 
+// Export the function, so other files in our backend can use it
 module.exports = scrape;

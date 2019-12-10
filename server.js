@@ -1,72 +1,39 @@
-// 'use strict';
-
-// express, exphbs, cheerio, axios were installed 10/25/ 5:44pm
+// express, cheerio, axios were installed 10/25/ 5:44pm
 // added logger and mongoose 10/26 5pm
-const express = require('express');
-const exphbs = require('express-handlebars');
-const logger = require('morgan');
-const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
 
-// Our scraping tools
-// Axios is a promised-based http library, similar to jQuery's Ajax method
-// It works on the client and on the server
-const cheerio = require('cheerio');
-const axios = require('axios');
+// Require our dependencies
+var express = require('express');
+var mongoose = require('mongoose');
+var exphbs = require('express-handlebars');
 
-// Initialize Express
-const app = express();
+// Set up our port to be either the host's designated port, or 3000
+var PORT = process.env.PORT || 3000;
 
-// set up an Express router
-const router = express.Router();
-require('./config/routes')(router);
+// Instantiate our Express App
+var app = express();
 
-
-// Configure middleware
-// Use morgan logger for logging requests
-app.use(logger('dev'));
+// Require our routes
+var routes = require('./routes');
 
 // Parse request body as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 // Make public a static folder
-app.use(express.static(__dirname + '/public'));
-// console.log('__DIRNAME - -> ', __dirname);
+app.use(express.static('public'));
 
-// // use bodyParser
-// app.use(bodyParser.urlencoded({
-//     extended: false
-// }));
-
-// use handlebars
-// By default, Express will require() the engine based on the file extension. In this case handlebar and express-handlebars are being required.
-// the folder structure for this is the views(folder)layouts,partials(subfolders), index.handelbars in views
+// Connect Handlebars to our Express app
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
-
 app.set('view engine', 'handlebars');
 
-// request going through router middleware
-app.use(router);
+// Have every request go through our route middleware
+app.use(routes);
 
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/newsScraper';
+// Connect to the Mongo DB
+mongoose.connect(MONGODB_URI);
 
-const database = process.env.MONGODB_URI || 'mongodb://localhost/newsScraper';
-
-
-// Connect to the Mongo DB and if ti hasn't been created already, creates a DB named newsScraperDB
-// useNewUrlParser parses the db url
-// mongoose.connect('mongodb://localhost/newsScraper', { useNewUrlParser: true });
-mongoose.connect(database, { useNewUrlParser: true }, function (error) {
-    if (error) {
-        console.log(error);
-    } else {
-        console.log('Connected to mongoose - - > ', database);
-    }
-});
-
-var PORT = process.env.PORT || 3000;
-
-// Start the server
-app.listen(PORT, function () {
-    console.log('App running on port - - > ' + PORT);
+// Listen on the port
+app.listen(PORT, function() {
+  console.log('App running on port - - > ' + PORT);
 });
