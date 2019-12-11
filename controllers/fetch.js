@@ -27,7 +27,7 @@ module.exports = {
         }
       })
       .catch(function (err) {
-        console.log('err ', err);
+        // console.log('err ', err);
         // This query won't insert articles with duplicate headlines, but it will error after inserting the others
         res.json({
           message: "Scrape complete!!"
